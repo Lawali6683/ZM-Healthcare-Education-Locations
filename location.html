@@ -350,18 +350,54 @@
     </div>
 
     <script>
-        mapboxgl.accessToken = 'pk.eyJ1IjoiaGFydW5hLWxhd2FsaSIsImEiOiJjbTFkcHcyb2MycTJtMmtyNDN3Z3ZjaWg1In0.uvzQuAwKBHhghvuorvp9Ug';
+        // Mapbox Access Token
+mapboxgl.accessToken = 'pk.eyJ1IjoiaGFydW5hLWxhd2FsaSIsImEiOiJjbTFkcHcyb2MycTJtMmtyNDN3Z3ZjaWg1In0.uvzQuAwKBHhghvuorvp9Ug';
 
-        var map = new mapboxgl.Map({
-            container: 'map',
-            style: 'mapbox://styles/mapbox/streets-v11',
-            center: [6.6616, 12.1165], // Gusau
-            zoom: 10
-        });
+// Create the Map
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11', 
+    center: [6.6645, 12.1623], 
+    zoom: 10 
+});
 
-        let markers = [];
+// Marker object to hold selected location
+var selectedMarker = null;
 
-        // Button functionality for Healthcare and Education
+// Function to hide container and show map with marker
+function showMapWithMarker(coordinates) {
+    // Hide the container3
+    document.getElementById('container3').classList.add('hidden');
+    document.getElementById('container').classList.add('hidden');
+    
+    // Remove old marker if it exists
+    if (selectedMarker) {
+        selectedMarker.remove();
+    }
+
+    // Add a new marker
+    selectedMarker = new mapboxgl.Marker()
+        .setLngLat(coordinates)
+        .addTo(map);
+
+    // Fly to the selected location
+    map.flyTo({
+        center: coordinates,
+        essential: true,
+        zoom: 14
+    });
+}
+
+// Event listener for location selection
+document.getElementById('location-options').addEventListener('change', function () {
+    var selectedOption = this.value;
+    if (selectedOption) {
+        var coords = selectedOption.split(',');
+        showMapWithMarker([parseFloat(coords[1]), parseFloat(coords[0])]);
+    }
+});
+
+// Button functionality for Healthcare and Education
         document.getElementById('healthcare').addEventListener('click', function() {
             document.getElementById('container3').classList.remove('hidden');
         });
@@ -369,54 +405,37 @@
         document.getElementById('education').addEventListener('click', function() {
             document.getElementById('container').classList.remove('hidden');
         });
-
-        // Close button for Healthcare modal
-document.getElementById('close-container3').addEventListener('click', function() {
+        
+// Event listener for closing the modal (back icon)
+document.getElementById('close-container3').addEventListener('click', function () {
     document.getElementById('container3').classList.add('hidden');
 });
 
-// Close button for Education modal
-document.getElementById('close-container').addEventListener('click', function() {
+document.getElementById('close-container').addEventListener('click', function () {
     document.getElementById('container').classList.add('hidden');
 });
-     // Select option functionality for Healthcare
-        document.getElementById('location-options').addEventListener('change', function() {
-            const selectedCoordinates = this.value;
-            if (selectedCoordinates) {
-                const [lat, lng] = selectedCoordinates.split(',');
-                showUserLocation(lat, lng);
-            }
-        });
+// Footer menu options to calculate time for different transport methods
+function calculateTime(distance, speed) {
+    return (distance / speed).toFixed(2); // Time = Distance / Speed
+}
 
-        // Select option functionality for Education
-        document.getElementById('education-options').addEventListener('change', function() {
-            const selectedCoordinates = this.value;
-            if (selectedCoordinates) {
-                const [lat, lng] = selectedCoordinates.split(',');
-                showUserLocation(lat, lng);
-            }
-        });
+document.getElementById('ambulance').addEventListener('click', function () {
+    alert('Estimated time by ambulance: ' + calculateTime(10, 60) + ' hours');
+});
 
-        // Show user's selected location on the map
-        function showUserLocation(lat, lng) {
-            markers.forEach(marker => marker.remove());
-            markers = [];
+document.getElementById('motorbike').addEventListener('click', function () {
+    alert('Estimated time by motorbike: ' + calculateTime(10, 40) + ' hours');
+});
 
-            map.flyTo({ center: [lng, lat], zoom: 14 });
+document.getElementById('bicycle').addEventListener('click', function () {
+    alert('Estimated time by bicycle: ' + calculateTime(10, 20) + ' hours');
+});
 
-            const userMarker = new mapboxgl.Marker({ color: 'yellow' })
-                .setLngLat([lng, lat])
-                .setPopup(new mapboxgl.Popup().setHTML('<h3>You are here</h3>'))
-                .addTo(map);
-            markers.push(userMarker);
+document.getElementById('walk').addEventListener('click', function () {
+    alert('Estimated time by walking: ' + calculateTime(10, 5) + ' hours');
+});
 
-            document.getElementById('loading-indicator').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('loading-indicator').style.display = 'none';
-            }, 2000);
-        }
-
-        // Footer item click handlers
+// Footer item click handlers
         document.getElementById('ambulance').addEventListener('click', function() {
             window.location.href = 'am.html';
         });
@@ -425,22 +444,13 @@ document.getElementById('close-container').addEventListener('click', function() 
             window.location.href = 'team.html';
         });
 
-        // Transport icons
-        function addTransportIcons(lat, lng) {
-            const transportTypes = [
-                { color: 'green', icon: '🛵', offset: [0, 0] }, // Motorbike
-                { color: 'blue', icon: '🚲', offset: [0, 30] }, // Bicycle
-                { color: 'red', icon: '👣', offset: [0, 60] }  // Walking
-            ];
+ 
 
-            transportTypes.forEach(type => {
-                const marker = new mapboxgl.Marker({ color: type.color, offset: type.offset })
-                    .setLngLat([lng, lat])
-                    .setPopup(new mapboxgl.Popup().setHTML(`<h3>${type.icon}</h3>`))
-                    .addTo(map);
-                markers.push(marker);
-            });
-        }
-    </script>
+// Hide loading indicator once the map is ready
+map.on('load', function () {
+    document.getElementById('loading-indicator').style.display = 'none';
+});
+
+         </script>
 </body>
 </html>
