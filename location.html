@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zamfara Services Map</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: black;
+            
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 1);
+        }
+        header{
+            background-color: #222;
+         border-bottom: 4px solid white;  
+            padding: 6px;
+            text-align: center;
+        box-shadow: 10px 10px 20px #0c0c0c, -10px -10px 20px #343434;  
+        }
+         footer {
+            background-color: #222;
+         border-top: 4px solid white;  
+            padding: 6px;
+            text-align: center;
+        box-shadow: 10px 10px 20px #0c0c0c, -10px -10px 20px #343434;   
+        }
+        .menu-item {
+            margin: 10px;
+            cursor: pointer;
+            color: #9aff15;
+            Font-weight:bold;
+            Font-size:15px;
+            background: #3b00ff;
+            Border-radius:10px;
+    border-bottom: 2px solid red;       
+          border-top: 4px solid;
+        }
+        .hidden {
+            display: none;
+        }
+        
+        #container3, 
+       #container {
+            position: absolute;
+            top: 10%;
+            width: 80%;
+            background-color: black;
+            padding: 20px;
+            box-shadow: 0 0 100px white;
+            text-align: center;
+            color: white;
+       box-shadow: 10px 10px 20px #0c0c0c, -10px -10px 20px #343434;   
+        }
+        .back-icon {
+            float: right;
+            cursor: pointer;
+        }
+   
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+        .loading {
+            text-align: center;
+            font-size: 18px;
+            display: none;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #333;
+            
+            color: #9aff15;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+        }
+        .footer-item {
+            cursor: pointer;
+            font-size: 20px;
+            background: #3b00ff;
+            Border-radius:50%;
+            border-bottom: 2px solid red;   
+          border-top: 4px solid;
+            box-shadow: 0 2px 4px rgba(6, 8, 1, 0.7);   
+        }
+       #ty{
+           Display:center;
+           Color:red;
+       }
+       #Img{
+           Display:center;
+           width: 50px;
+           height: 50px;
+           Border-radius:50%;
+       }
+       select {
+    width: 70%; /* Zaka iya gyara wannan fadin yadda ka ga dama */
+    margin: 10px auto; /* Cika a tsakiyar container */
+    display: block;
+    padding: 10px;
+    border: 1px solid white;
+    background-color: #222;
+    color: white;
+}
+.tyu{
+    width: 100px;
+    width: 100px;
+    Border-radius:59%;
+    
+}
+
+      
+    </style>
+</head>
+<body>
+    <header>
+        <div class="menu">
+            <span class="menu-item" id="healthcare"><i class="fas fa-hospital"></i> Healthcare</span>
+            <span class="menu-item" id="education"><i class="fas fa-school"></i> Education</span>
+        </div>
+    </header>
+    
+    <main>
+        <div id="map"></div>
+    </main>
+
+    <footer>
+        <span class="footer-item" id="ambulance"><i class="fas fa-ambulance"></i></span>
+        <span class="footer-item" id="team"><i class="fas fa-code"></i></span>
+        <span class="footer-item" id="motorbike"><i class="fas fa-motorcycle"></i></span>
+        <span class="footer-item" id="bicycle"><i class="fas fa-bicycle"></i></span>
+        <span class="footer-item" id="walk"><i class="fas fa-walking"></i></span>
+    </footer>
+
+    <div id="loading-indicator" class="loading">
+        <p>Searching... Please wait.</p>
+    </div>
+
+    <!-- Modal for Healthcare options -->
+    <div id="container3" class="hidden">
+        <span class="back-icon" id="close-container3">✖️</span>
+  <img src="zm.png" class="tyu">     <h3>Healthcare in Gusau</h3>
+        <select id="location-options">
+            <option value="" class="ty" style="color:red;">Select an Option</option>
+            <option value="12.1623,6.6645">Special Hospital Gusau</option>
+            <option value="12.1705,6.6609">General Hospital Farida</option>
+            <option value="12.1216,6.6392">Federal Medical Center, Gusau (FMC)</option>
+            <option value="12.0956,6.6772">King Fahad Women & Children Hospital</option>
+            <option value="12.1000,6.6789">Jakiri community Desp</option>
+            <option value="12.1000,6.6789">Jakiri Desp</option>
+<option value="12.2000,6.7890">Kwata WCWC</option>
+<option value="12.3000,6.8901">Science Secondary School Clinic</option>
+<option value="12.4000,6.9012">Zacas Clinic</option>
+<option value="12.5000,6.0123">Chediya Ukku Desp</option>
+<option value="12.6000,6.1234">Kofar Mani Clinic</option>
+<option value="12.7000,6.2345">Kolo Desp</option>
+<option value="12.8000,6.3456">Shagari Clinic</option>
+<option value="12.9000,6.4567">Unguwar Mangwaro Desp</option>
+<option value="13.0000,6.5678">Fagin Mahe Desp</option>
+<option value="13.1000,6.6789">Kundumao Desp</option>
+<option value="13.2000,6.7890">Lafiya Clinic</option>
+<option value="13.3000,6.8901">Maijatau Desp</option>
+            <!-- Sauran options... -->
+        </select>
+        <h3>Healthcare in Zurmi</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option>
+            
+       <option value="12.4000,6.7890">Zumin General Hospital</option>
+<option value="12.5000,6.8901">Birnin Tsaba HC</option>
+<option value="12.6000,6.9012">Dauran Basic HC</option>
+<option value="12.7000,6.0123">Doroyi HC</option>
+<option value="12.8000,6.1234">Marrakkai HC</option>
+    
+   </select>
+   <h3>Healthcare in Maradun</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option>
+        <option value="12.9000,6.4567">General Hospital Maradun</option>
+<option value="13.0000,6.5678">Alfarm Clinic (Faru/Magami)</option>
+<option value="13.1000,6.6789">Danau Disp</option>
+<option value="13.2000,6.7890">Ellenkwashe Desp</option>
+<option value="13.3000,6.8901">Faru Upgraded PHC</option>
+<option value="13.4000,6.9012">Gidan Adamu Disp</option>
+<option value="13.5000,6.0123">Kuzi Disp</option>
+<option value="13.6000,6.1234">Magami Dispensary</option>
+<option value="13.7000,6.2345">Rudunu Disp</option>
+<option value="13.8000,6.3456">Ruwan Bado Disp</option>
+<option value="13.9000,6.4567">Sabon Sara Disp</option>            
+            </select>
+         </select>
+   <h3>Healthcare in Talata Mafara</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option> 
+            
+        <option value="12.1000,6.6789">Talata Mafara General Hospital</option>
+<option value="12.2000,6.7890">Tala Mafara OLPH Clinic</option>
+<option value="12.3000,6.8901">Garbadu Disp</option>
+<option value="12.4000,6.9012">T/Bai Disp</option>   
+            
+          </select>
+           <h3>Healthcare in Bungudu</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option>
+            
+       <option value="12.5000,6.1234">General Hospital Bungudu</option>
+<option value="12.6000,6.2345">Yargalma Disp</option>
+<option value="12.7000,6.3456">Zarummai HC</option>
+<option value="12.8000,6.4567">Birnin Zauma HC</option>
+<option value="12.9000,6.5678">T/Maigunya Disp</option>
+<option value="13.0000,6.6789">Yandu Disp</option>     
+          </select>
+          <h3>Healthcare in Chafe</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option>
+       <option value="12.1000,6.6789">General Hospital Chefe</option>
+<option value="12.2000,6.7890">Fagen Baza Desp</option>
+<option value="12.3000,6.8901">Gangara Desp</option>
+<option value="12.4000,6.9012">Kyauyen Kane Desp</option>
+<option value="12.5000,6.0123">Rahama Clinic</option>    
+            
+            </select>
+         <h3>Healthcare in Maru</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option>
+      <option value="12.6000,6.3456">General Hospital Maru</option>
+<option value="12.7000,6.4567">Babera Disp</option>
+<option value="12.8000,6.5678">Badiyiwa Desp</option>
+<option value="12.9000,6.6789">Janbako Upgraded Dispensa</option>
+<option value="13.0000,6.7890">Sakkida Bayan Dutse Disp</option>
+<option value="13.1000,6.8901">Sakkida Fulani Disp</option>     
+          </select>
+          <h3>Healthcare in Anka</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option>
+       
+          <option value="12.7000,6.1234">General Hospital Anka</option>
+<option value="12.8000,6.2345">Bagega PHC</option>
+<option value="12.9000,6.3456">Kasumka Comm Disp</option>
+<option value="13.0000,6.4567">Kawaye Disp</option>
+<option value="13.1000,6.5678">Tungar Daji Disp (Anka)</option>
+<option value="13.2000,6.6789">Makakari Disp</option>
+<option value="13.3000,6.7890">Tungar Kudaku</option>
+ 
+            </select> 
+        <h3>Healthcare in Bukkuyum</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option> 
+            
+       <option value="12.4000,6.5678">Bukkuyum General Hospital</option>
+<option value="12.5000,6.6789">Adabka PHC</option>
+<option value="12.6000,6.7890">Duhuwa Disp</option>
+<option value="12.7000,6.8901">Fasagora Disp</option>    
+            
+            </select >  
+         <h3>Healthcare in Gummi</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option>
+            
+       <option value="12.1000,6.6789">Jakiri community Desp</option>
+<option value="12.3000,6.7901">Gummi General Hospital</option>
+<option value="12.4000,6.8902">Barikin Daji Disp</option>
+<option value="12.5000,6.9903">Gwalli Disp</option>
+    
+            </select >   
+        <h3>Healthcare in Bakura</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option> 
+            
+            <option value="12.1000,6.6789">Jakiri community Desp</option>
+<option value="12.6000,6.4500">General Hospital Bakura</option>
+<option value="12.7000,6.5500">Tan Garam Desp</option>
+<option value="12.8000,6.6500">Tsabta Disp</option>
+<option value="12.9000,6.7500">Wuya PHC</option>
+
+            
+            </select> 
+               <h3>Healthcare in Birnin Magaji</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option> 
+            
+            <option value="12.1000,6.6789">Jakiri community Desp</option>
+<option value="12.2000,6.7800">General Hospital Birnin Magaji</option>
+<option value="12.3000,6.8800">Gidan Namaganga Disp</option>
+<option value="12.4000,6.9800">Sabon Birnin Disp</option>
+<option value="12.5000,7.0800">Shamusalle Dispensary</option>
+
+            </select>
+            <h3>Healthcare in Shinkafi</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option>
+         <option value="12.1000,6.6789">Jakiri community Desp</option>
+<option value="12.6000,6.7700">Shinkafi Hospital</option>
+<option value="12.7000,6.8700">Batauna Disp</option>
+<option value="12.8000,6.9700">Bula Disp</option>
+<option value="12.9000,7.0700">G/Rijiya Disp</option>
+<option value="13.0000,7.1700">Galadi PHC</option>
+<option value="13.1000,7.2700">T/Bore Disp</option>
+   
+            </select >
+        <h3>Healthcare in Kauran Namoda</h3>
+        <select id="location-options">
+            <option value="" >Select an Option</option>
+            
+       <option value="12.1000,6.6789">Jakiri community Desp</option>
+<option value="13.6000,7.4500">Kaura Nmoda General Hospital</option>
+<option value="13.7000,7.5500">Wonaka Disp</option>
+<option value="13.8000,7.6500">Banga PHC</option>
+<option value="13.9000,7.7500">Katsara Disp</option>
+<option value="14.0000,7.8500">Kogi Disp</option>
+<option value="14.1000,7.9500">Kawari Disp</option>
+<option value="14.2000,8.0500">Rahazawa Disp</option>    
+            
+  </select>   
+            
+        </div>
+         
+    
+
+
+
+    <!-- Modal for Education options -->
+    <div id="container" class="hidden">
+        <span class="back-icon" id="close-container">✖️</span>
+       <img src="zm.png" class="tyu"> <h3>Education in Zamfara state</h3>
+        <select id="education-options">
+            <option value="">Select an Option</option>
+            <option value="12.1678,6.3456">Zamfara State University</option>
+<option value="12.2000,6.4500">Federal College of Education (Technical) Gusau</option>
+<option value="12.3000,6.5500">Federal University Gusau Zamfara State</option>
+<option value="12.4000,6.6500">Huda University Gusau Zamfara State</option>
+<option value="12.5000,6.7500">Federal Polytechnic Kauran Namuda</option>
+<option value="12.6000,6.8500">Abdu Gusau Polytechnic Talata Mafara</option>
+<option value="12.7000,6.9500">Zamfara State College of Arts and Science (ZACAS) Gusau</option>
+<option value="12.8000,7.0500">Zamfara State College of Education Maru</option>
+<option value="12.9000,7.1500">School Of Nursing and Midwifery</option>
+<option value="13.0000,7.2500">Ali Gusau College of Education</option>
+
+            <!-- Sauran zaɓuɓɓuka... -->
+        </select>
+    </div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaGFydW5hLWxhd2FsaSIsImEiOiJjbTFkcHcyb2MycTJtMmtyNDN3Z3ZjaWg1In0.uvzQuAwKBHhghvuorvp9Ug';
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [6.6616, 12.1165], // Gusau
+            zoom: 10
+        });
+
+        let markers = [];
+
+        // Button functionality for Healthcare and Education
+        document.getElementById('healthcare').addEventListener('click', function() {
+            document.getElementById('container3').classList.remove('hidden');
+        });
+
+        document.getElementById('education').addEventListener('click', function() {
+            document.getElementById('container').classList.remove('hidden');
+        });
+
+        // Close button for Healthcare modal
+document.getElementById('close-container3').addEventListener('click', function() {
+    document.getElementById('container3').classList.add('hidden');
+});
+
+// Close button for Education modal
+document.getElementById('close-container').addEventListener('click', function() {
+    document.getElementById('container').classList.add('hidden');
+});
+     // Select option functionality for Healthcare
+        document.getElementById('location-options').addEventListener('change', function() {
+            const selectedCoordinates = this.value;
+            if (selectedCoordinates) {
+                const [lat, lng] = selectedCoordinates.split(',');
+                showUserLocation(lat, lng);
+            }
+        });
+
+        // Select option functionality for Education
+        document.getElementById('education-options').addEventListener('change', function() {
+            const selectedCoordinates = this.value;
+            if (selectedCoordinates) {
+                const [lat, lng] = selectedCoordinates.split(',');
+                showUserLocation(lat, lng);
+            }
+        });
+
+        // Show user's selected location on the map
+        function showUserLocation(lat, lng) {
+            markers.forEach(marker => marker.remove());
+            markers = [];
+
+            map.flyTo({ center: [lng, lat], zoom: 14 });
+
+            const userMarker = new mapboxgl.Marker({ color: 'yellow' })
+                .setLngLat([lng, lat])
+                .setPopup(new mapboxgl.Popup().setHTML('<h3>You are here</h3>'))
+                .addTo(map);
+            markers.push(userMarker);
+
+            document.getElementById('loading-indicator').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('loading-indicator').style.display = 'none';
+            }, 2000);
+        }
+
+        // Footer item click handlers
+        document.getElementById('ambulance').addEventListener('click', function() {
+            window.location.href = 'am.html';
+        });
+
+        document.getElementById('team').addEventListener('click', function() {
+            window.location.href = 'team.html';
+        });
+
+        // Transport icons
+        function addTransportIcons(lat, lng) {
+            const transportTypes = [
+                { color: 'green', icon: '🛵', offset: [0, 0] }, // Motorbike
+                { color: 'blue', icon: '🚲', offset: [0, 30] }, // Bicycle
+                { color: 'red', icon: '👣', offset: [0, 60] }  // Walking
+            ];
+
+            transportTypes.forEach(type => {
+                const marker = new mapboxgl.Marker({ color: type.color, offset: type.offset })
+                    .setLngLat([lng, lat])
+                    .setPopup(new mapboxgl.Popup().setHTML(`<h3>${type.icon}</h3>`))
+                    .addTo(map);
+                markers.push(marker);
+            });
+        }
+    </script>
+</body>
+</html>
